@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Clan Adventure World</title>
+<style>
+body { font-family: Arial; text-align: center; background: #cfe8cf; }
+#map {
+  width: 800px; height: 600px; margin: auto; position: relative; border: 4px solid #2f6f2f; background: #7ecb7e; overflow: hidden;
+}
+#lake {
+  width: 250px; height: 250px; background: #4aa3ff; position: absolute; top: 175px; left: 275px; border-radius: 50%;
+}
+.cat {
+  width: 30px; height: 30px; position: absolute; border-radius: 50%; background: orange; border: 2px solid black;
+}
+.tree {
+  width: 40px; height: 60px; position: absolute; background: #0a3d0a; border-radius: 8px;
+}
+.prey {
+  width: 20px; height: 20px; position: absolute; background: brown; border-radius: 50%;
+}
+.herb {
+  width: 20px; height: 20px; position: absolute; background: green; border-radius: 50%;
+}
+.npc { width: 25px; height: 25px; position: absolute; background: gray; border-radius: 50%; }
+button { margin: 5px; padding: 8px; }
+#stats { margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<h1>🐾 Warrior Cats World 🐾</h1>
+
+<div id="setup">
+<p>Cat Name:</p>
+<input id="name">
+<p>Fur Color:</p>
+<input type="color" id="color" value="#ff8000">
+<p>Choose Clan:</p>
+<select id="clan">
+<option>ThunderClan</option>
+<option>RiverClan</option>
+<option>WindClan</option>
+<option>ShadowClan</option>
+</select>
+<p>Choose Role:</p>
+<select id="role">
+<option>Kit</option>
+<option>Warrior Apprentice</option>
+<option>Medicine Cat Apprentice</option>
+</select>
+<br><br>
+<button onclick="startGame()">Start Adventure</button>
+</div>
+
+<div id="game" style="display:none">
+<div id="map">
+  <div id="lake"></div>
+  <div id="player" class="cat"></div>
+  <!-- Trees -->
+  <div class="tree" style="top:50px; left:100px;"></div>
+  <div class="tree" style="top:300px; left:600px;"></div>
+  <div class="tree" style="top:450px; left:200px;"></div>
+  <!-- Prey -->
+  <div class="prey" style="top:120px; left:700px;"></div>
+  <div class="prey" style="top:400px; left:80px;"></div>
+  <!-- Herbs -->
+  <div class="herb" style="top:500px; left:400px;"></div>
+  <div class="herb" style="top:80px; left:250px;"></div>
+  <!-- NPC cats -->
+  <div class="npc" style="top:100px; left:150px;"></div>
+  <div class="npc" style="top:450px; left:550px;"></div>
+</div>
+
+<br>
+<button onclick="move('up')">⬆ Move</button>
+<button onclick="move('down')">⬇ Move</button>
+<button onclick="move('left')">⬅ Move</button>
+<button onclick="move('right')">➡ Move</button>
+<button onclick="hunt()">🐭 Hunt</button>
+<button onclick="collect()">🍃 Collect Herbs</button>
+<button onclick="gather()">📯 Clan Gathering</button>
+<button onclick="battle()">⚔ Battle Clan</button>
+
+<div id="stats">
+<p id="info"></p>
+<p>Prey: <span id="preyCount">0</span></p>
+<p>Herbs: <span id="herbCount">0</span></p>
+<p id="message"></p>
+</div>
+
+</div>
+
+<script>
+let x=385, y=285;
+let prey=0, herbs=0;
+let catName="", color="", clan="", role="";
+
+function startGame(){
+  catName=document.getElementById("name").value;
+  color=document.getElementById("color").value;
+  clan=document.getElementById("clan").value;
+  role=document.getElementById("role").value;
+  document.getElementById("player").style.background=color;
+  document.getElementById("info").textContent = catName + " | " + role + " | " + clan;
+  document.getElementById("setup").style.display="none";
+  document.getElementById("game").style.display="block";
+  updatePosition();
+}
+
+function updatePosition(){
+  const player=document.getElementById("player");
+  player.style.left=x+"px";
+  player.style.top=y+"px";
+}
+
+function move(dir){
+  if(dir==="up") y-=20;
+  if(dir==="down") y+=20;
+  if(dir==="left") x-=20;
+  if(dir==="right") x+=20;
+  if(x<0)x=0; if(x>770)x=770;
+  if(y<0)y=0; if(y>570)y=570;
+  updatePosition();
+}
+
+function hunt(){
+  document.querySelectorAll(".prey").forEach(p=>{
+    if(Math.abs(p.offsetLeft-x)<30 && Math.abs(p.offsetTop-y)<30){
+      prey++;
+      document.getElementById("preyCount").textContent=prey;
+      p.style.left=Math.random()*770+"px";
+      p.style.top=Math.random()*570+"px";
+      document.getElementById("message").textContent="You caught prey!";
+    }
+  });
+}
+
+function collect(){
+  document.querySelectorAll(".herb").forEach(h=>{
+    if(Math.abs(h.offsetLeft-x)<30 && Math.abs(h.offsetTop-y)<30){
+      herbs++;
+      document.getElementById("herbCount").textContent=herbs;
+      h.style.display="none";
+      document.getElementById("message").textContent="You collected herbs!";
+    }
+  });
+}
+
+function gather(){
+  document.getElementById("message").textContent="You join your clan gathering by the lake!";
+}
+
+function battle(){
+  document.getElementById("message").textContent="You battle with another clan near the border!";
+}
+
+document.addEventListener("keydown", function(e){
+  if(e.key==="w") move("up");
+  if(e.key==="s") move("down");
+  if(e.key==="a") move("left");
+  if(e.key==="d") move("right");
+});
+</script>
+
+</body>
